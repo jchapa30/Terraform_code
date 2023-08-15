@@ -15,25 +15,25 @@ resource "aws_subnet" "dev-subnet-1" {
     Name = "dev-subnet-1"
   }
 }
-data "aws_vpc" "existing_vpc"{
+
+data "aws_vpc" "existing_vpc" {
   default = true
 }
 
 resource "aws_subnet" "dev-subnet-2" {
   vpc_id     = data.aws_vpc.existing_vpc.id
   cidr_block = "172.31.48.0/20"
-  avalibility_zone = "us-east-1a"
-
+  availability_zone = "us-east-1a"
 
   tags = {
     Name = "dev-subnet-2"
   }
 }
 
-output "dev-vpc-id"{
+output "dev-vpc-id" {
   value = aws_vpc.Development.id
 }
 
-output "dev-subnet-id"{
+output "dev-subnet-id" {
   value = aws_subnet.dev-subnet-1.id
 }
