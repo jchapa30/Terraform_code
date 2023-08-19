@@ -2,6 +2,7 @@ variable "vpc_cidr_block" {}
 variable "subnet_cidr_block" {}
 variable "availability_zone" {}
 variable "env_prefix" {}
+variable "my_ip" {}
 
 provider "aws" {
   region = "us-east-1"
@@ -37,6 +38,7 @@ resource "aws_internet_gateway" "myapp-aws_internet_gateway" {
   }
 }
 
+
 resource "aws_route_table" "myapp-route-table" {
   vpc_id = aws_vpc.myapp-vpc.id
 
@@ -54,3 +56,34 @@ resource "aws_route_table_association" "a-rtb-subnet" {
   route_table_id = aws_route_table.myapp-route-table.id
 }
 
+resource "aws_security_group" "myapp-sg" {
+  name        = "myapp-sg"
+  description = "Allow inbound traffic"
+  vpc_id      = aws_vpc.myapp-vpc.id
+
+  ingress {
+
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = [var.my_ip]
+
+  }
+  ingress {
+
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+}
